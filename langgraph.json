@@ -1,0 +1,7 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "Music Support Bot": "./agent.py:music_support_bot"
+  },
+  "env": "./.env"
+}

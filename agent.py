@@ -8,15 +8,16 @@ A customer support chatbot for a music store that can:
 Built with DeepAgents - the agent autonomously decides which tools to use.
 """
 
-from dotenv import load_dotenv
 import sqlite3
+
 import requests
+from deepagents import create_deep_agent
+from dotenv import load_dotenv
 from langchain_community.utilities.sql_database import SQLDatabase
 from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
 from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool
-from deepagents import create_deep_agent
 
 # Load environment variables
 load_dotenv()
@@ -54,7 +55,7 @@ def get_albums_by_artist(artist: str):
         JOIN Artist ON Album.ArtistId = Artist.ArtistId
         WHERE Artist.Name LIKE '%{artist}%';
         """,
-        include_columns=True
+        include_columns=True,
     )
 
 
@@ -69,7 +70,7 @@ def get_tracks_by_artist(artist: str):
         LEFT JOIN Track ON Track.AlbumId = Album.AlbumId
         WHERE Artist.Name LIKE '%{artist}%';
         """,
-        include_columns=True
+        include_columns=True,
     )
 
 
@@ -80,7 +81,7 @@ def check_for_songs(song_title: str):
         f"""
         SELECT * FROM Track WHERE Name LIKE '%{song_title}%';
         """,
-        include_columns=True
+        include_columns=True,
     )
 
 
@@ -118,9 +119,9 @@ Be polite, helpful, and guide customers to provide any information you need (lik
             get_albums_by_artist,
             get_tracks_by_artist,
             check_for_songs,
-            get_customer_info
+            get_customer_info,
         ],
-        system_prompt=system_prompt
+        system_prompt=system_prompt,
     )
 
     return agent
@@ -140,7 +141,7 @@ if __name__ == "__main__":
 
     while True:
         user_input = input("You: ")
-        if user_input.lower() in ['quit', 'exit', 'q']:
+        if user_input.lower() in ["quit", "exit", "q"]:
             print("Goodbye!")
             break
 
@@ -152,9 +153,14 @@ if __name__ == "__main__":
         # Extract the latest AI response
         if result and "messages" in result:
             ai_message = result["messages"][-1]
-            ai_content = ai_message.content if hasattr(ai_message, 'content') else str(ai_message)
+            ai_content = (
+                ai_message.content
+                if hasattr(ai_message, "content")
+                else str(ai_message)
+            )
 
             print(f"\nAssistant: {ai_content}\n")
 
             # Add to conversation history
+            conversation_history.append({"role": "assistant", "content": ai_content})
             conversation_history.append({"role": "assistant", "content": ai_content})
