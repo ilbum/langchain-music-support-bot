@@ -163,4 +163,3 @@ if __name__ == "__main__":
 
             # Add to conversation history
             conversation_history.append({"role": "assistant", "content": ai_content})
-            conversation_history.append({"role": "assistant", "content": ai_content})
